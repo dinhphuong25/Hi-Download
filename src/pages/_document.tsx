@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html lang="vi">
+    <Html>
       <Head>
         {/* High-speed CDN DNS Prefetch & Preconnect for maximum speed */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,6 +31,11 @@ export default function Document() {
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#0284c7" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Hi Download" />
       </Head>
       <body>
         <Main />
