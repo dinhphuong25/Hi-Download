@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+  <defs>
+    <!-- Deep Obsidian Gradient -->
+    <linearGradient id="hiBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Vibrant Cyan Accent Gradient -->
+    <linearGradient id="hiCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Inner top bezel shine -->
+    <linearGradient id="hiShine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Badge Background -->
+  <rect width="36" height="36" rx="9" fill="url(#hiBgGrad)" />
+
+  <!-- Top highlight shine border -->
+  <rect x="0.75" y="0.75" width="34.5" height="34.5" rx="8" stroke="url(#hiShine)" stroke-width="1.5" fill="none" />
+
+  <!-- Active signal spark dot -->
+  <circle cx="28.5" cy="7.5" r="2.2" fill="#38bdf8" />
+
+  <!-- Vector Download Arrow: Sharp & Dynamic -->
+  <path d="M18 8V20.5" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M13 16L18 21L23 16" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Precision Capture Cradle / Tray with Cyan Gradient -->
+  <path d="M10.5 22.5V25C10.5 26.38 11.62 27.5 13 27.5H23C24.38 27.5 25.5 26.38 25.5 25V22.5" stroke="url(#hiCyanGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
