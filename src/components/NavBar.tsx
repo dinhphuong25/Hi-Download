@@ -3,7 +3,6 @@ import { Logo } from '@/components/Logo';
 import {
   Box,
   Button,
-  Flex,
   HStack,
   List,
   ListItem,
@@ -18,6 +17,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { MdCheck, MdExpandMore } from 'react-icons/md';
+import ReactCountryFlag from 'react-country-flag';
 
 type Props = {};
 
@@ -89,10 +89,12 @@ const NavBar = (props: Props) => {
                 boxShadow="0 1px 2px rgba(0,0,0,0.03)"
                 gap="6px"
               >
-                {/* Flag */}
-                <Text fontSize="16px" lineHeight="1" mr="2px">
-                  {currentLang.flag}
-                </Text>
+                {/* Flag SVG - works on all OS including Windows */}
+                <ReactCountryFlag
+                  countryCode={currentLang.countryCode}
+                  svg
+                  style={{ width: '18px', height: '14px', marginRight: '2px', borderRadius: '2px' }}
+                />
                 {currentLang.name}
                 <Box
                   as={MdExpandMore}
@@ -138,9 +140,11 @@ const NavBar = (props: Props) => {
                           onClick={() => handleSelectLang(item.alias, router.asPath)}
                         >
                           <HStack spacing="8px">
-                            <Text fontSize="16px" lineHeight="1">
-                              {item.flag}
-                            </Text>
+                            <ReactCountryFlag
+                              countryCode={item.countryCode}
+                              svg
+                              style={{ width: '20px', height: '15px', borderRadius: '2px', flexShrink: 0 }}
+                            />
                             <Text>{item.name}</Text>
                           </HStack>
                           {isActive && (

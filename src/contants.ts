@@ -3,11 +3,13 @@ export const LANGUAGES = [
     alias: 'vi',
     name: 'Tiếng Việt',
     flag: '🇻🇳',
+    countryCode: 'VN',
   },
   {
     alias: 'en',
     name: 'English',
     flag: '🇬🇧',
+    countryCode: 'GB',
   },
 ];
 
