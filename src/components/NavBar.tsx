@@ -1,13 +1,10 @@
 import { LANGUAGES } from '@/contants';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import useTrans from '@/hooks/useTrans';
 import { Logo } from '@/components/Logo';
 import {
   Box,
   Button,
   Flex,
   HStack,
-  IconButton,
   List,
   ListItem,
   Popover,
@@ -15,20 +12,28 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { MdLanguage, MdCheck } from 'react-icons/md';
+import { MdCheck, MdExpandMore } from 'react-icons/md';
 
 type Props = {};
 
 const NavBar = (props: Props) => {
   const router = useRouter();
-  const trans = useTrans();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const currentLangName =
-    LANGUAGES.find((l) => l.alias === router.locale)?.name || 'Tiếng Việt';
+  const currentLang = LANGUAGES.find((l) => l.alias === router.locale) || LANGUAGES[0];
+
+  const handleSelectLang = (alias: string, href: string) => {
+    onClose();
+    // Navigate after closing — small delay to let popover animate out
+    setTimeout(() => {
+      router.push(href, href, { locale: alias, scroll: false });
+    }, 80);
+  };
 
   return (
     <Box
@@ -59,9 +64,15 @@ const NavBar = (props: Props) => {
           </Box>
         </Link>
 
-        {/* Language selector (Tiếng Việt & English only) */}
+        {/* Language selector */}
         <HStack spacing="8px">
-          <Popover placement="bottom-end">
+          <Popover
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+            placement="bottom-end"
+            isLazy
+          >
             <PopoverTrigger>
               <Button
                 variant="outline"
@@ -70,19 +81,33 @@ const NavBar = (props: Props) => {
                 borderColor="#e2e8f0"
                 bg="#ffffff"
                 _hover={{ bg: '#f1f5f9', borderColor: '#cbd5e1' }}
-                leftIcon={<MdLanguage size="15px" color="#0284c7" />}
                 color="#0f172a"
                 fontSize="13px"
                 fontWeight="600"
                 px="12px"
                 h="36px"
                 boxShadow="0 1px 2px rgba(0,0,0,0.03)"
+                gap="6px"
               >
-                {currentLangName}
+                {/* Flag */}
+                <Text fontSize="16px" lineHeight="1" mr="2px">
+                  {currentLang.flag}
+                </Text>
+                {currentLang.name}
+                <Box
+                  as={MdExpandMore}
+                  size="16px"
+                  color="#64748b"
+                  ml="1px"
+                  style={{
+                    transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                />
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              w="150px"
+              w="165px"
               bg="#ffffff"
               border="1px solid #e2e8f0"
               borderRadius="12px"
@@ -98,24 +123,30 @@ const NavBar = (props: Props) => {
                       (!router.locale && item.alias === 'vi');
                     return (
                       <ListItem key={item.alias}>
-                        <Link locale={item.alias} href={router.asPath}>
-                          <HStack
-                            justify="space-between"
-                            py="7px"
-                            px="10px"
-                            borderRadius="8px"
-                            cursor="pointer"
-                            bg={isActive ? '#f1f5f9' : 'transparent'}
-                            color={isActive ? '#0f172a' : '#475569'}
-                            fontWeight={isActive ? '700' : '500'}
-                            fontSize="13px"
-                            _hover={{ bg: '#f1f5f9', color: '#0f172a' }}
-                            transition="all 0.15s ease"
-                          >
+                        <HStack
+                          justify="space-between"
+                          py="8px"
+                          px="10px"
+                          borderRadius="8px"
+                          cursor="pointer"
+                          bg={isActive ? '#f0f9ff' : 'transparent'}
+                          color={isActive ? '#0284c7' : '#475569'}
+                          fontWeight={isActive ? '700' : '500'}
+                          fontSize="13px"
+                          _hover={{ bg: '#f1f5f9', color: '#0f172a' }}
+                          transition="all 0.15s ease"
+                          onClick={() => handleSelectLang(item.alias, router.asPath)}
+                        >
+                          <HStack spacing="8px">
+                            <Text fontSize="16px" lineHeight="1">
+                              {item.flag}
+                            </Text>
                             <Text>{item.name}</Text>
-                            {isActive && <MdCheck size="16px" color="#0284c7" />}
                           </HStack>
-                        </Link>
+                          {isActive && (
+                            <MdCheck size="16px" color="#0284c7" />
+                          )}
+                        </HStack>
                       </ListItem>
                     );
                   })}

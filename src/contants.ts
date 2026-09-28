@@ -2,10 +2,12 @@ export const LANGUAGES = [
   {
     alias: 'vi',
     name: 'Tiếng Việt',
+    flag: '🇻🇳',
   },
   {
     alias: 'en',
     name: 'English',
+    flag: '🇬🇧',
   },
 ];
 
