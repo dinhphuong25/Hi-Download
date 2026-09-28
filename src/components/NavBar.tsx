@@ -43,10 +43,11 @@ const NavBar = (props: Props) => {
       top="0"
       zIndex={100}
       style={{
-        background: 'rgba(248, 250, 252, 0.55)',
+        background: '#ffffff',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(226, 232, 240, 0.6)',
+        borderBottom: '2px solid #e2e8f0',
+        boxShadow: '0 1px 8px -2px rgba(15, 23, 42, 0.08)',
       }}
     >
       <HStack
@@ -78,9 +79,10 @@ const NavBar = (props: Props) => {
                 variant="outline"
                 size="sm"
                 borderRadius="10px"
-                borderColor="rgba(226, 232, 240, 0.8)"
-                bg="rgba(255,255,255,0.5)"
-                _hover={{ bg: 'rgba(241, 245, 249, 0.8)', borderColor: '#cbd5e1' }}
+                borderColor="#d1d5db"
+                borderWidth="1.5px"
+                bg="#ffffff"
+                _hover={{ bg: '#f1f5f9', borderColor: '#94a3b8' }}
                 color="#0f172a"
                 fontSize="13px"
                 fontWeight="600"

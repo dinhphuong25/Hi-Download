@@ -65,7 +65,7 @@ export default function Home() {
           {/* Main Downloader Component */}
           <Board />
 
-          <Box h="1px" bg="#e2e8f0" my={{ base: '40px', md: '56px' }} />
+          <Box h="1px" bg="#cbd5e1" my={{ base: '40px', md: '56px' }} />
 
           {/* Section: Supported Platforms */}
           <Box id="nen-tang">
@@ -97,13 +97,13 @@ export default function Home() {
                   p={{ base: '18px', md: '22px' }}
                   borderRadius="18px"
                   bg="#ffffff"
-                  border="1px solid #e2e8f0"
-                  boxShadow="0 1px 3px rgba(15, 23, 42, 0.04)"
+                  border="1.5px solid #cbd5e1"
+                  boxShadow="0 2px 6px -1px rgba(15, 23, 42, 0.07)"
                   transition="all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
                   _hover={{
                     borderColor: '#0ea5e9',
                     transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 20px -4px rgba(15, 23, 42, 0.08)',
+                    boxShadow: '0 10px 24px -4px rgba(15, 23, 42, 0.12)',
                   }}
                 >
                   <HStack justify="space-between" mb={{ base: '8px', md: '10px' }}>
@@ -145,7 +145,7 @@ export default function Home() {
             </Grid>
           </Box>
 
-          <Box h="1px" bg="#e2e8f0" my={{ base: '40px', md: '56px' }} />
+          <Box h="1px" bg="#cbd5e1" my={{ base: '40px', md: '56px' }} />
 
           {/* Section: 3-Step Guide */}
           <Box id="huong-dan">
@@ -177,13 +177,13 @@ export default function Home() {
                   p={{ base: '20px', md: '26px' }}
                   borderRadius="18px"
                   bg="#ffffff"
-                  border="1px solid #e2e8f0"
-                  boxShadow="0 1px 3px rgba(15, 23, 42, 0.04)"
+                  border="1.5px solid #cbd5e1"
+                  boxShadow="0 2px 6px -1px rgba(15, 23, 42, 0.07)"
                   transition="all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
                   _hover={{
-                    borderColor: '#cbd5e1',
+                    borderColor: '#0284c7',
                     transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 20px -4px rgba(15, 23, 42, 0.06)',
+                    boxShadow: '0 10px 24px -4px rgba(15, 23, 42, 0.10)',
                   }}
                 >
                   <Text
@@ -207,7 +207,7 @@ export default function Home() {
             </Grid>
           </Box>
 
-          <Box h="1px" bg="#e2e8f0" my={{ base: '40px', md: '56px' }} />
+          <Box h="1px" bg="#cbd5e1" my={{ base: '40px', md: '56px' }} />
 
           {/* Section: FAQ Accordion */}
           <Box id="faq">
