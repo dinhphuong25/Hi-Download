@@ -179,7 +179,7 @@ export default {
     subtitle: 'Chúng tôi luôn lắng nghe ý kiến đóng góp, giải đáp thắc mắc hoặc xử lý yêu cầu bản quyền của bạn.',
     emailCardTitle: 'Email Hỗ Trợ Chính Thức',
     emailCardDesc: 'Gửi thư cho chúng tôi nếu bạn gặp sự cố kỹ thuật hoặc cần tư vấn:',
-    email: 'contact@hidownload.app',
+    email: 'hi@dinhphuong.tech',
     copyEmail: 'Sao chép email',
     copiedEmail: 'Đã sao chép!',
     dmcaTitle: 'Bản Quyền & DMCA',

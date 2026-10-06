@@ -179,7 +179,7 @@ export default {
     subtitle: 'We are always ready to assist with technical feedback, feature suggestions, or copyright DMCA inquiries.',
     emailCardTitle: 'Official Support Email',
     emailCardDesc: 'Reach out to our team if you experience technical issues or have inquiries:',
-    email: 'contact@hidownload.app',
+    email: 'hi@dinhphuong.tech',
     copyEmail: 'Copy Email',
     copiedEmail: 'Email Copied!',
     dmcaTitle: 'Copyright & DMCA Inquiries',
