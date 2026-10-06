@@ -7,7 +7,7 @@ interface LogoProps {
   showBadge?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ size = 'md', showBadge = true }) => {
+export const Logo: React.FC<LogoProps> = ({ size = 'md', showBadge = false }) => {
   const isSm = size === 'sm';
   const isLg = size === 'lg';
 
