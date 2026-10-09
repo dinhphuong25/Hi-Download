@@ -23,10 +23,10 @@ const Footer: React.FC = () => {
       <Box maxW="1000px" mx="auto">
         {/* Outer border card */}
         <Box
-          border="1px solid #e2e8f0"
+          border="1.5px solid #cbd5e1"
           borderRadius="20px"
           bg="#ffffff"
-          boxShadow="0 2px 12px -4px rgba(15, 23, 42, 0.06)"
+          boxShadow="0 4px 16px -4px rgba(15, 23, 42, 0.08)"
           px={{ base: '20px', md: '36px' }}
           pt={{ base: '24px', md: '28px' }}
           pb={{ base: '20px', md: '24px' }}
@@ -50,8 +50,9 @@ const Footer: React.FC = () => {
               </Box>
             </NextLink>
             <Text
-              fontSize={{ base: '12.5px', md: '13px' }}
-              color="#64748b"
+              fontSize={{ base: '13px', md: '13.5px' }}
+              color="#334155"
+              fontWeight="500"
               lineHeight="1.6"
               textAlign={{ base: 'center', md: 'left' }}
             >
@@ -59,7 +60,7 @@ const Footer: React.FC = () => {
             </Text>
           </VStack>
 
-          {/* Quick Legal & Contact Links: Only Liên Hệ, Điều Khoản, Bảo Mật */}
+          {/* Quick Legal & Contact Links */}
           <HStack
             spacing={{ base: '14px', sm: '18px' }}
             align="center"
@@ -68,49 +69,49 @@ const Footer: React.FC = () => {
           >
             <NextLink href="/contact" locale={router.locale}>
               <HStack
-                spacing="5px"
+                spacing="6px"
                 cursor="pointer"
-                color="#475569"
-                fontSize="13px"
-                fontWeight="600"
+                color="#0f172a"
+                fontSize="13.5px"
+                fontWeight="700"
                 transition="all 0.15s ease"
                 _hover={{ color: '#0284c7' }}
               >
-                <MdMailOutline size="15px" />
+                <MdMailOutline size="16px" />
                 <Text>{trans.footer.contact}</Text>
               </HStack>
             </NextLink>
 
-            <Box w="1px" h="13px" bg="#e2e8f0" />
+            <Box w="1.5px" h="14px" bg="#cbd5e1" />
 
             <NextLink href="/terms-of-service" locale={router.locale}>
               <HStack
-                spacing="5px"
+                spacing="6px"
                 cursor="pointer"
-                color="#475569"
-                fontSize="13px"
-                fontWeight="600"
+                color="#0f172a"
+                fontSize="13.5px"
+                fontWeight="700"
                 transition="all 0.15s ease"
                 _hover={{ color: '#0284c7' }}
               >
-                <MdGavel size="15px" />
+                <MdGavel size="16px" />
                 <Text>{trans.footer.terms}</Text>
               </HStack>
             </NextLink>
 
-            <Box w="1px" h="13px" bg="#e2e8f0" />
+            <Box w="1.5px" h="14px" bg="#cbd5e1" />
 
             <NextLink href="/privacy-policy" locale={router.locale}>
               <HStack
-                spacing="5px"
+                spacing="6px"
                 cursor="pointer"
-                color="#475569"
-                fontSize="13px"
-                fontWeight="600"
+                color="#0f172a"
+                fontSize="13.5px"
+                fontWeight="700"
                 transition="all 0.15s ease"
                 _hover={{ color: '#0284c7' }}
               >
-                <MdShield size="15px" />
+                <MdShield size="16px" />
                 <Text>{trans.footer.privacy}</Text>
               </HStack>
             </NextLink>
@@ -118,14 +119,14 @@ const Footer: React.FC = () => {
         </Flex>
 
         {/* Divider */}
-        <Box h="1px" bg="#f1f5f9" my={{ base: '18px', md: '22px' }} />
+        <Box h="1px" bg="#e2e8f0" my={{ base: '18px', md: '22px' }} />
 
         {/* Bottom Bar: Copyright + Founder */}
         <Box textAlign="center">
-          <Text fontSize="12.5px" color="#475569" fontWeight="500">
+          <Text fontSize="13px" color="#1e293b" fontWeight="600">
             {trans.footer.copyright}
           </Text>
-          <Text fontSize="12px" color="#94a3b8" fontWeight="400" mt="4px">
+          <Text fontSize="12.5px" color="#475569" fontWeight="500" mt="4px">
             {trans.footer.foundedByPrefix}{' '}
             <Text
               as="a"
@@ -133,7 +134,7 @@ const Footer: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               color="#0284c7"
-              fontWeight="600"
+              fontWeight="700"
               _hover={{ color: '#0369a1', textDecoration: 'underline' }}
               cursor="pointer"
               transition="color 0.15s ease"
