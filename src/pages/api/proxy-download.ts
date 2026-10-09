@@ -92,7 +92,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).end('Missing url parameter');
   }
 
-  const decodedUrl = decodeURIComponent(url);
+  const rawTargetUrl = Array.isArray(url) ? url[0] : url;
+
+  // Only decode if it was encoded with percent encoding
+  const decodedUrl =
+    rawTargetUrl.startsWith('http%3A') || rawTargetUrl.startsWith('https%3A')
+      ? decodeURIComponent(rawTargetUrl)
+      : rawTargetUrl;
 
   if (!isSafeUrl(decodedUrl)) {
     return res.status(403).end('Forbidden domain or invalid URL');

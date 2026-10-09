@@ -249,9 +249,17 @@ const Board: React.FC = () => {
       const linkA = document.createElement('a');
       linkA.href = proxyUrl;
       linkA.download = filename;
+      linkA.target = '_blank';
+      linkA.rel = 'noopener noreferrer';
       document.body.appendChild(linkA);
       linkA.click();
-      document.body.removeChild(linkA);
+      setTimeout(() => {
+        try {
+          if (document.body.contains(linkA)) {
+            document.body.removeChild(linkA);
+          }
+        } catch (_) {}
+      }, 500);
 
       showToast({
         title: trans.toast.downloadStartTitle,

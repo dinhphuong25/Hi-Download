@@ -132,16 +132,16 @@ function checkRateLimit(ip: string): boolean {
 
 // Fast unshortener for shortened URLs (vm.tiktok.com, youtu.be, fb.watch, pin.it, etc.)
 async function unshortenUrl(rawUrl: string): Promise<string> {
-  const isShortened = /(vm\.tiktok\.com|vt\.tiktok\.com|v\.douyin\.com|youtu\.be|fb\.watch|pin\.it|v\.kuaishou\.com)/i.test(
+  const isShortened = /(vm\.tiktok\.com|vt\.tiktok\.com|v\.douyin\.com|youtu\.be|fb\.watch|pin\.it|v\.kuaishou\.com|facebook\.com\/share\/|threads\.net\/share\/)/i.test(
     rawUrl,
   );
   if (!isShortened) return rawUrl;
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500);
+    const timeout = setTimeout(() => controller.abort(), 4500);
     const resp = await fetch(rawUrl, {
-      method: 'HEAD',
+      method: 'GET',
       redirect: 'follow',
       signal: controller.signal,
       headers: {
@@ -154,6 +154,117 @@ async function unshortenUrl(rawUrl: string): Promise<string> {
   } catch {
     return rawUrl;
   }
+}
+
+// Multi-Tier Facebook Media Extractor
+async function extractFacebookMedia(expandedUrl: string): Promise<{
+  hdUrl: string | null;
+  sdUrl: string | null;
+  title: string;
+  thumbnail: string;
+  authorName: string;
+} | null> {
+  // Method 1: @renpwn/fb-downloader
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const getFBInfo = require('@renpwn/fb-downloader');
+    const info = await getFBInfo(expandedUrl);
+    if (info && (info.hd || info.sd)) {
+      return {
+        hdUrl: info.hd || null,
+        sdUrl: info.sd || null,
+        title: info.title || 'Facebook Video HD',
+        thumbnail: info.thumbnail || '',
+        authorName: 'Facebook User',
+      };
+    }
+  } catch (_) {}
+
+  // If URL has reel ID, try /watch/?v=
+  const reelIdMatch = expandedUrl.match(/facebook\.com\/reel\/(\d+)/i);
+  if (reelIdMatch && reelIdMatch[1]) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const getFBInfo = require('@renpwn/fb-downloader');
+      const info = await getFBInfo(`https://www.facebook.com/watch/?v=${reelIdMatch[1]}`);
+      if (info && (info.hd || info.sd)) {
+        return {
+          hdUrl: info.hd || null,
+          sdUrl: info.sd || null,
+          title: info.title || 'Facebook Reel HD',
+          thumbnail: info.thumbnail || '',
+          authorName: 'Facebook User',
+        };
+      }
+    } catch (_) {}
+  }
+
+  // Method 2: Direct Facebook HTML Scraping
+  try {
+    const res = await fetch(expandedUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept':
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+      },
+    });
+    if (res.ok) {
+      const html = await res.text();
+      const hdMatch =
+        html.match(/"browser_native_hd_url":"([^"]+)"/) ||
+        html.match(/"playable_url_quality_hd":"([^"]+)"/);
+      const sdMatch =
+        html.match(/"browser_native_sd_url":"([^"]+)"/) ||
+        html.match(/"playable_url":"([^"]+)"/);
+
+      const cleanJson = (str?: string) => {
+        if (!str) return null;
+        try {
+          return JSON.parse(`{"u":"${str}"}`).u;
+        } catch {
+          return str.replace(/\\u0025/g, '%').replace(/\\u0026/g, '&').replace(/\\\//g, '/');
+        }
+      };
+
+      const hdUrl = cleanJson(hdMatch?.[1]);
+      const sdUrl = cleanJson(sdMatch?.[1]);
+
+      if (hdUrl || sdUrl) {
+        const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+        const title = titleMatch ? titleMatch[1].replace(/ \| Facebook/g, '').trim() : 'Facebook Video HD';
+        return {
+          hdUrl: hdUrl || null,
+          sdUrl: sdUrl || null,
+          title,
+          thumbnail: '',
+          authorName: 'Facebook User',
+        };
+      }
+    }
+  } catch (_) {}
+
+  // Method 3: btch.fbdown with generous timeout
+  try {
+    const fbPromise = fbdown(expandedUrl);
+    const fbTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 10000));
+    const fbData = await Promise.race([fbPromise, fbTimeout]);
+    if (fbData && (fbData.HD || fbData.Normal_video)) {
+      return {
+        hdUrl: fbData.HD || null,
+        sdUrl: fbData.Normal_video || null,
+        title: 'Facebook Video HD',
+        thumbnail: '',
+        authorName: 'Facebook User',
+      };
+    }
+  } catch (_) {}
+
+  return null;
 }
 
 export default async function handler(
@@ -530,10 +641,10 @@ export default async function handler(
             .catch(() => null)
         : Promise.resolve(null);
 
-      // Race youtube(...) with 4.5s timeout
+      // Race youtube(...) with 12s timeout
       const ytPromise = youtube(expandedUrl).catch(() => null);
       const timeoutPromise = new Promise<null>((resolve) =>
-        setTimeout(() => resolve(null), 4500),
+        setTimeout(() => resolve(null), 12000),
       );
 
       const [oEmbedData, ytData] = await Promise.all([
@@ -571,12 +682,7 @@ export default async function handler(
         });
       }
 
-      if (formats.length > 0 || ytId) {
-        if (formats.length === 0 && ytId) {
-          const mock = getMockVideoData('youtube', expandedUrl);
-          formats.push(...mock.formats);
-        }
-
+      if (formats.length > 0) {
         const result: ExtractResponse = {
           success: true,
           platform: 'youtube',
@@ -589,7 +695,7 @@ export default async function handler(
           thumbnail,
           authorName: author,
           formats,
-          isMock: !ytData?.mp4,
+          isMock: false,
         };
         setCached(cacheKey, result);
         return res.status(200).json(result);
@@ -599,45 +705,41 @@ export default async function handler(
     // 3. Facebook
     if (platformId === 'facebook') {
       try {
-        const fbPromise = fbdown(expandedUrl).catch(() => null);
-        const fbTimeout = new Promise<null>((resolve) =>
-          setTimeout(() => resolve(null), 3800),
-        );
-        const fbData = await Promise.race([fbPromise, fbTimeout]);
-
-        if (fbData && (fbData.HD || fbData.Normal_video)) {
+        const fbResult = await extractFacebookMedia(expandedUrl);
+        if (fbResult && (fbResult.hdUrl || fbResult.sdUrl)) {
           const formats: VideoFormat[] = [];
-          if (fbData.HD) {
+          if (fbResult.hdUrl) {
             formats.push({
               quality: 'Full HD 1080p',
               label: 'Tải Video HD Gốc Không Logo',
-              url: fbData.HD,
+              url: fbResult.hdUrl,
               type: 'video',
               extension: 'mp4',
               badge: 'Siêu Nét',
             });
           }
-          if (fbData.Normal_video && fbData.Normal_video !== fbData.HD) {
+          if (fbResult.sdUrl && fbResult.sdUrl !== fbResult.hdUrl) {
             formats.push({
               quality: 'SD 720p',
               label: 'Tải Video SD Tiết Kiệm Dung Lượng',
-              url: fbData.Normal_video,
+              url: fbResult.sdUrl,
               type: 'video',
               extension: 'mp4',
               badge: 'Tải Nhanh',
             });
           }
+          const primaryVideo = fbResult.hdUrl || fbResult.sdUrl || '';
           const result: ExtractResponse = {
             success: true,
             platform: 'facebook',
             platformName: 'Facebook',
-            videoUrl: fbData.HD || fbData.Normal_video || '',
-            videoHdUrl: fbData.HD || null,
-            videoSdUrl: fbData.Normal_video || null,
+            videoUrl: primaryVideo,
+            videoHdUrl: fbResult.hdUrl || null,
+            videoSdUrl: fbResult.sdUrl || null,
             mp3Url: null,
-            title: 'Facebook Reels / Watch Video HD',
-            thumbnail: '',
-            authorName: 'Facebook User',
+            title: fbResult.title || 'Facebook Reels / Watch Video HD',
+            thumbnail: fbResult.thumbnail || '',
+            authorName: fbResult.authorName || 'Facebook User',
             formats,
             isMock: false,
           };
@@ -798,27 +900,44 @@ export default async function handler(
       }
     } catch (_) {}
 
-    // Intelligent Fallback to Mock Data
-    const smartMock = getMockVideoData(platformId, expandedUrl);
-    const result: ExtractResponse = {
-      success: true,
-      ...smartMock,
-      platform: platformId,
-      platformName: platformMeta?.name || smartMock.platformName,
-      isMock: true,
-    };
-    setCached(cacheKey, result);
-    return res.status(200).json(result);
+    // Return mock data ONLY if forceMock was explicitly requested
+    if (forceMock) {
+      const smartMock = getMockVideoData(platformId, expandedUrl);
+      const result: ExtractResponse = {
+        success: true,
+        ...smartMock,
+        platform: platformId,
+        platformName: platformMeta?.name || smartMock.platformName,
+        isMock: true,
+      };
+      setCached(cacheKey, result);
+      return res.status(200).json(result);
+    }
+
+    return res.status(400).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message:
+        'Không thể bóc tách video từ liên kết này. Vui lòng đảm bảo bài viết/video ở chế độ công khai hoặc thử lại sau ít phút.',
+    });
   } catch (err: any) {
-    const fallbackMock = getMockVideoData(platformId, cleanUrl);
-    const result: ExtractResponse = {
-      success: true,
-      ...fallbackMock,
-      platform: platformId,
-      platformName: platformMeta?.name || fallbackMock.platformName,
-      isMock: true,
-    };
-    setCached(cacheKey, result);
-    return res.status(200).json(result);
+    if (forceMock) {
+      const fallbackMock = getMockVideoData(platformId, cleanUrl);
+      const result: ExtractResponse = {
+        success: true,
+        ...fallbackMock,
+        platform: platformId,
+        platformName: platformMeta?.name || fallbackMock.platformName,
+        isMock: true,
+      };
+      setCached(cacheKey, result);
+      return res.status(200).json(result);
+    }
+
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'Có lỗi xảy ra trong quá trình xử lý video. Vui lòng thử lại.',
+    });
   }
 }
