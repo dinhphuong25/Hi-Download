@@ -7,8 +7,6 @@ export default function Document() {
         {/* High-speed CDN DNS Prefetch & Preconnect for maximum speed */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="dns-prefetch" href="https://v16-webapp-prime.tiktok.com" />
         <link rel="dns-prefetch" href="https://p16-sign-va.tiktokcdn.com" />
         <link rel="dns-prefetch" href="https://www.tikwm.com" />

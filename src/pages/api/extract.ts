@@ -13,6 +13,8 @@ import {
   douyin,
   aio,
 } from 'btch-downloader';
+// @ts-ignore
+import getFBInfo from '@renpwn/fb-downloader';
 
 export type VideoFormat = {
   quality: string;
@@ -166,8 +168,6 @@ async function extractFacebookMedia(expandedUrl: string): Promise<{
 } | null> {
   // Method 1: @renpwn/fb-downloader
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const getFBInfo = require('@renpwn/fb-downloader');
     const info = await getFBInfo(expandedUrl);
     if (info && (info.hd || info.sd)) {
       return {
@@ -184,8 +184,6 @@ async function extractFacebookMedia(expandedUrl: string): Promise<{
   const reelIdMatch = expandedUrl.match(/facebook\.com\/reel\/(\d+)/i);
   if (reelIdMatch && reelIdMatch[1]) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const getFBInfo = require('@renpwn/fb-downloader');
       const info = await getFBInfo(`https://www.facebook.com/watch/?v=${reelIdMatch[1]}`);
       if (info && (info.hd || info.sd)) {
         return {
