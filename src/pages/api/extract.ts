@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { detectPlatform } from '@/contants';
 import { getMockVideoData } from '@/mockData';
 import {
   ttdl,
@@ -15,6 +14,49 @@ import {
 } from 'btch-downloader';
 // @ts-ignore
 import getFBInfo from '@renpwn/fb-downloader';
+
+// Self-contained server-side platform detector to avoid chunk-splitting cross-boundary runtime issues
+function detectPlatform(url: string): { id: string; name: string } | null {
+  if (!url) return null;
+  const u = url.trim();
+  if (/(tiktok\.com|vm\.tiktok\.com|vt\.tiktok\.com)/i.test(u)) return { id: 'tiktok', name: 'TikTok' };
+  if (/(douyin\.com|v\.douyin\.com)/i.test(u)) return { id: 'douyin', name: 'Douyin' };
+  if (/(instagram\.com)/i.test(u)) return { id: 'instagram', name: 'Instagram' };
+  if (/(facebook\.com|fb\.watch|fb\.gg)/i.test(u)) return { id: 'facebook', name: 'Facebook' };
+  if (/(youtube\.com|youtu\.be)/i.test(u)) return { id: 'youtube', name: 'YouTube' };
+  if (/(capcut\.com)/i.test(u)) return { id: 'capcut', name: 'CapCut' };
+  if (/(twitter\.com|x\.com)/i.test(u)) return { id: 'twitter', name: 'Twitter/X' };
+  if (/(threads\.net)/i.test(u)) return { id: 'threads', name: 'Threads' };
+  if (/(pinterest\.com|pin\.it)/i.test(u)) return { id: 'pinterest', name: 'Pinterest' };
+  if (/(bilibili\.com|b23\.tv)/i.test(u)) return { id: 'bilibili', name: 'Bilibili' };
+  if (/(kuaishou\.com|v\.kuaishou\.com)/i.test(u)) return { id: 'kuaishou', name: 'Kuaishou' };
+  return null;
+}
+
+function decodeHtmlEntities(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
+      try {
+        return String.fromCodePoint(parseInt(hex, 16));
+      } catch {
+        return _;
+      }
+    })
+    .replace(/&#(\d+);/g, (_, dec) => {
+      try {
+        return String.fromCodePoint(parseInt(dec, 10));
+      } catch {
+        return _;
+      }
+    })
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+}
 
 export type VideoFormat = {
   quality: string;
@@ -166,14 +208,16 @@ async function extractFacebookMedia(expandedUrl: string): Promise<{
   thumbnail: string;
   authorName: string;
 } | null> {
-  // Method 1: @renpwn/fb-downloader
+  // Method 1: @renpwn/fb-downloader with 8.5s timeout protection
   try {
-    const info = await getFBInfo(expandedUrl);
+    const fbInfoPromise = getFBInfo(expandedUrl);
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 8500));
+    const info = await Promise.race([fbInfoPromise, timeoutPromise]);
     if (info && (info.hd || info.sd)) {
       return {
         hdUrl: info.hd || null,
         sdUrl: info.sd || null,
-        title: info.title || 'Facebook Video HD',
+        title: decodeHtmlEntities(info.title || 'Facebook Video HD'),
         thumbnail: info.thumbnail || '',
         authorName: 'Facebook User',
       };
@@ -184,12 +228,14 @@ async function extractFacebookMedia(expandedUrl: string): Promise<{
   const reelIdMatch = expandedUrl.match(/facebook\.com\/reel\/(\d+)/i);
   if (reelIdMatch && reelIdMatch[1]) {
     try {
-      const info = await getFBInfo(`https://www.facebook.com/watch/?v=${reelIdMatch[1]}`);
+      const fbInfoPromise = getFBInfo(`https://www.facebook.com/watch/?v=${reelIdMatch[1]}`);
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 8500));
+      const info = await Promise.race([fbInfoPromise, timeoutPromise]);
       if (info && (info.hd || info.sd)) {
         return {
           hdUrl: info.hd || null,
           sdUrl: info.sd || null,
-          title: info.title || 'Facebook Reel HD',
+          title: decodeHtmlEntities(info.title || 'Facebook Reel HD'),
           thumbnail: info.thumbnail || '',
           authorName: 'Facebook User',
         };

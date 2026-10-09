@@ -376,26 +376,38 @@ const Board: React.FC = () => {
       setActivePhotoIdx(0);
 
       try {
-        const res = await fetch('/api/extract/', {
+        const res = await fetch('/api/extract', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: cleanUrl }),
         });
 
-        const data = await res.json();
+        let data: any = null;
+        try {
+          data = await res.json();
+        } catch (_) {
+          data = null;
+        }
+
         setLoading(false);
 
         const hasMedia = Boolean(
-          data.videoUrl ||
-          data.mp3Url ||
-          (data.images && data.images.length > 0) ||
-          (data.formats && data.formats.length > 0),
+          data?.videoUrl ||
+          data?.mp3Url ||
+          (data?.images && data.images.length > 0) ||
+          (data?.formats && data.formats.length > 0),
         );
 
-        if (!res.ok || !data.success || !hasMedia) {
+        if (!res.ok || !data?.success || !hasMedia) {
           const errorMsg =
-            data.message ||
-            trans.toast.defaultExtractError;
+            data?.message ||
+            (res.status === 429
+              ? 'Tần suất gửi yêu cầu quá nhanh. Vui lòng đợi ít phút và thử lại.'
+              : res.status === 504
+              ? 'Yêu cầu bóc tách quá thời gian phản hồi. Vui lòng thử lại.'
+              : res.status >= 500
+              ? 'Máy chủ đang bận xử lý hoặc không thể tải dữ liệu liên kết này. Vui lòng thử lại sau.'
+              : trans.toast.defaultExtractError);
           setError(errorMsg);
           showToast({
             title: trans.toast.cannotExtractTitle,
@@ -429,8 +441,9 @@ const Board: React.FC = () => {
           status: 'success',
           duration: 2800,
         });
-      } catch (_) {
+      } catch (err) {
         setLoading(false);
+        console.error('[HiDownload Extract Error]', err);
         const netErr = trans.toast.networkErrorDesc;
         setError(netErr);
         showToast({
@@ -675,12 +688,35 @@ const Board: React.FC = () => {
             status="error"
             borderRadius="12px"
             bg="#fef2f2"
-            border="1px solid #fecaca"
+            border="1.5px solid #fecaca"
             color="#991b1b"
             fontSize="13px"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            py="12px"
+            px="16px"
           >
-            <AlertIcon color="#ef4444" />
-            {error}
+            <HStack spacing="10px" flex="1" mr="12px">
+              <AlertIcon color="#ef4444" m="0" />
+              <Text fontWeight="500">{error}</Text>
+            </HStack>
+            {url && (
+              <Button
+                size="xs"
+                colorScheme="red"
+                variant="solid"
+                onClick={() => runExtraction(url)}
+                isLoading={loading}
+                borderRadius="8px"
+                fontWeight="600"
+                px="12px"
+                h="28px"
+                flexShrink={0}
+              >
+                Thử lại
+              </Button>
+            )}
           </Alert>
         </Fade>
       )}
