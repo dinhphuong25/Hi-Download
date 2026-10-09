@@ -732,28 +732,11 @@ const Board: React.FC = () => {
             id="result-box"
             w="100%"
             bg="#ffffff"
-            border="1px solid #e2e8f0"
-            borderRadius="18px"
-            p={{ base: '18px', md: '22px' }}
-            boxShadow="0 4px 16px -2px rgba(15, 23, 42, 0.06)"
+            border="1.5px solid #cbd5e1"
+            borderRadius="20px"
+            p={{ base: '20px', md: '26px' }}
+            boxShadow="0 10px 30px -5px rgba(15, 23, 42, 0.08)"
           >
-            {videoData.isMock && (
-              <HStack
-                mb="14px"
-                p="6px 10px"
-                borderRadius="8px"
-                bg="#f8fafc"
-                border="1px dashed #cbd5e1"
-                justify="space-between"
-              >
-                <Text fontSize="12px" color="#475569" fontWeight="500">
-                  {trans.result.demoNotice}
-                </Text>
-                <Badge bg="#e2e8f0" color="#334155" fontSize="10px">
-                  DEMO
-                </Badge>
-              </HStack>
-            )}
 
             {isPhotoMode && photoList.length > 0 ? (
               /* PHOTO ALBUM / SLIDESHOW RESULT VIEW */
@@ -949,21 +932,27 @@ const Board: React.FC = () => {
                     </Text>
 
                     {/* Primary Photo Action Buttons */}
-                    <Flex gap="8px" flexWrap="wrap">
+                    <Flex gap="10px" flexWrap="wrap" align="center">
                       <Button
                         onClick={handleDownloadAllZip}
                         isLoading={zipping}
                         loadingText={trans.result.zipping}
                         flex={1}
                         minW="180px"
-                        h="40px"
-                        borderRadius="10px"
-                        fontSize="13px"
+                        h="46px"
+                        borderRadius="12px"
+                        fontSize="13.5px"
                         fontWeight="700"
-                        bg="#0f172a"
+                        bg="linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
                         color="#ffffff"
-                        _hover={{ bg: '#1e293b' }}
-                        leftIcon={<MdFolderZip size="17px" />}
+                        _hover={{
+                          bg: 'linear-gradient(135deg, #0369a1 0%, #075985 100%)',
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 6px 20px -2px rgba(2, 132, 199, 0.4)',
+                        }}
+                        _active={{ transform: 'translateY(0)' }}
+                        leftIcon={<MdFolderZip size="18px" />}
+                        transition="all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
                       >
                         {trans.result.downloadAllZip.replace('{count}', photoList.length.toString())}
                       </Button>
@@ -974,15 +963,15 @@ const Board: React.FC = () => {
                           triggerDirectDownload(targetImg, 'jpg', `Photo_${activePhotoIdx + 1}`);
                         }}
                         minW="150px"
-                        h="40px"
-                        borderRadius="10px"
+                        h="46px"
+                        borderRadius="12px"
                         fontSize="13px"
                         fontWeight="600"
                         bg="#f8fafc"
-                        border="1px solid #e2e8f0"
+                        border="1.5px solid #cbd5e1"
                         color="#0f172a"
-                        _hover={{ bg: '#f1f5f9' }}
-                        leftIcon={<MdImage size="16px" />}
+                        _hover={{ bg: '#f1f5f9', borderColor: '#94a3b8' }}
+                        leftIcon={<MdImage size="17px" />}
                       >
                         {trans.result.downloadThisPhoto.replace('{index}', (activePhotoIdx + 1).toString())}
                       </Button>
@@ -993,15 +982,15 @@ const Board: React.FC = () => {
                             triggerDirectDownload(videoData.mp3Url!, 'mp3', 'Audio');
                           }}
                           minW="120px"
-                          h="40px"
-                          borderRadius="10px"
+                          h="46px"
+                          borderRadius="12px"
                           fontSize="13px"
-                          fontWeight="600"
-                          bg="#f8fafc"
-                          border="1px solid #e2e8f0"
-                          color="#0f172a"
-                          _hover={{ bg: '#f1f5f9' }}
-                          leftIcon={<MdMusicNote size="15px" />}
+                          fontWeight="700"
+                          bg="#fef3c7"
+                          border="1.5px solid #fde68a"
+                          color="#92400e"
+                          _hover={{ bg: '#fde68a' }}
+                          leftIcon={<MdMusicNote size="16px" />}
                         >
                           {trans.result.downloadMp3}
                         </Button>
@@ -1144,23 +1133,72 @@ const Board: React.FC = () => {
             ) : (
               /* REGULAR VIDEO RESULT VIEW */
               <Box>
+                {/* Top Success & Platform Status Bar */}
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  p="8px 12px"
+                  mb="16px"
+                  borderRadius="10px"
+                  bg="#f8fafc"
+                  border="1px solid #e2e8f0"
+                  flexWrap="wrap"
+                  gap="8px"
+                >
+                  <HStack spacing="8px">
+                    <MdCheckCircle size="18px" color="#10b981" />
+                    <Text fontSize="12.5px" fontWeight="700" color="#0f172a">
+                      {trans.toast.doneTitle}
+                    </Text>
+                    <Text fontSize="12px" color="#64748b" display={{ base: 'none', sm: 'inline' }}>
+                      · {trans.result.noWatermark}
+                    </Text>
+                  </HStack>
+
+                  <HStack spacing="6px">
+                    <Badge
+                      bg="#e0f2fe"
+                      color="#0284c7"
+                      fontSize="11px"
+                      px="8px"
+                      py="2px"
+                      borderRadius="6px"
+                      fontWeight="700"
+                    >
+                      {videoData.platformName?.toUpperCase() || videoData.platform?.toUpperCase()}
+                    </Badge>
+                    <Badge
+                      bg="#ecfdf5"
+                      color="#059669"
+                      fontSize="11px"
+                      px="8px"
+                      py="2px"
+                      borderRadius="6px"
+                      fontWeight="600"
+                    >
+                      100% GỐC HD
+                    </Badge>
+                  </HStack>
+                </Flex>
+
                 <Flex
                   direction={{ base: 'column', sm: 'row' }}
-                  gap="16px"
+                  gap="20px"
                   align="flex-start"
-                  mb="16px"
+                  mb="18px"
                 >
                   {/* Thumbnail Preview */}
                   {videoData.thumbnail ? (
                     <Box
                       flexShrink={0}
-                      borderRadius="12px"
+                      borderRadius="14px"
                       overflow="hidden"
-                      w={{ base: '100%', sm: '130px' }}
-                      h={{ base: '180px', sm: '130px' }}
+                      w={{ base: '100%', sm: '150px' }}
+                      h={{ base: '200px', sm: '150px' }}
                       bg="#f1f5f9"
                       position="relative"
-                      border="1px solid #e2e8f0"
+                      border="1.5px solid #cbd5e1"
+                      boxShadow="0 4px 12px -2px rgba(15, 23, 42, 0.08)"
                     >
                       <Image
                         src={videoData.thumbnail}
@@ -1171,93 +1209,81 @@ const Board: React.FC = () => {
                       />
                       <Badge
                         position="absolute"
-                        bottom="6px"
-                        right="6px"
-                        bg="#0f172a"
+                        bottom="8px"
+                        right="8px"
+                        bg="rgba(15, 23, 42, 0.85)"
                         color="#ffffff"
-                        fontSize="9px"
-                        px="5px"
-                        py="1px"
+                        fontSize="10px"
+                        px="6px"
+                        py="2px"
                         borderRadius="4px"
+                        backdropFilter="blur(4px)"
+                        fontWeight="700"
                       >
-                        {videoData.platform?.toUpperCase()}
+                        {videoData.duration || videoData.platform?.toUpperCase()}
                       </Badge>
                     </Box>
                   ) : (
                     <Flex
                       flexShrink={0}
-                      w={{ base: '100%', sm: '130px' }}
-                      h={{ base: '100px', sm: '130px' }}
+                      w={{ base: '100%', sm: '150px' }}
+                      h={{ base: '120px', sm: '150px' }}
                       bg="#f8fafc"
-                      borderRadius="12px"
-                      border="1px solid #e2e8f0"
+                      borderRadius="14px"
+                      border="1.5px solid #cbd5e1"
                       align="center"
                       justify="center"
                       color="#64748b"
+                      boxShadow="0 2px 8px -2px rgba(15, 23, 42, 0.06)"
                     >
-                      {renderPlatformIcon(videoData.platform, 36)}
+                      {renderPlatformIcon(videoData.platform, 42)}
                     </Flex>
                   )}
 
                   {/* Video Info Details */}
                   <Box flex={1} minW={0} w="100%">
-                    <HStack spacing="6px" mb="6px" flexWrap="wrap">
-                      <Badge
-                        bg="#f1f5f9"
-                        color="#0f172a"
-                        fontSize="11px"
-                        px="6px"
-                        py="2px"
-                        borderRadius="4px"
-                        fontWeight="700"
-                      >
-                        {videoData.platformName?.toUpperCase() || videoData.platform?.toUpperCase()}
-                      </Badge>
-                      {videoData.authorName && (
-                        <Text fontSize="12px" color="#0ea5e9" fontWeight="600">
+                    {videoData.authorName && (
+                      <HStack spacing="6px" mb="4px">
+                        <Text fontSize="13px" color="#0284c7" fontWeight="700">
                           @{videoData.authorName}
                         </Text>
-                      )}
-                      <Badge
-                        bg="#ecfdf5"
-                        color="#059669"
-                        fontSize="10px"
-                        px="5px"
-                        py="1px"
-                        borderRadius="4px"
-                      >
-                        {trans.result.noWatermark}
-                      </Badge>
-                    </HStack>
+                      </HStack>
+                    )}
 
                     <Text
-                      fontSize="14px"
+                      fontSize={{ base: '15px', md: '16.5px' }}
                       fontWeight="700"
                       color="#0f172a"
-                      lineHeight="1.5"
+                      lineHeight="1.45"
                       noOfLines={2}
-                      mb="14px"
+                      mb="16px"
                     >
                       {videoData.title || trans.result.videoDefaultTitle}
                     </Text>
 
-                    {/* Primary 1-Click Action Buttons */}
-                    <Flex gap="8px" flexWrap="wrap">
+                    {/* Primary Action Buttons */}
+                    <Flex gap="10px" flexWrap="wrap" align="center">
                       <Button
                         onClick={() => {
                           const bestVideo = videoData.videoHdUrl || videoData.videoUrl;
                           triggerDirectDownload(bestVideo, 'mp4', 'HD_NoWatermark');
                         }}
                         flex={1}
-                        minW="160px"
-                        h="40px"
-                        borderRadius="10px"
-                        fontSize="13px"
+                        minW="180px"
+                        h="46px"
+                        borderRadius="12px"
+                        fontSize="13.5px"
                         fontWeight="700"
-                        bg="#0f172a"
+                        bg="linear-gradient(135deg, #0284c7 0%, #0369a1 100%)"
                         color="#ffffff"
-                        _hover={{ bg: '#1e293b' }}
-                        leftIcon={<MdHighQuality size="16px" />}
+                        _hover={{
+                          bg: 'linear-gradient(135deg, #0369a1 0%, #075985 100%)',
+                          transform: 'translateY(-1px)',
+                          boxShadow: '0 6px 20px -2px rgba(2, 132, 199, 0.4)',
+                        }}
+                        _active={{ transform: 'translateY(0)' }}
+                        leftIcon={<MdHighQuality size="20px" />}
+                        transition="all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
                       >
                         {trans.result.downloadVideoHd}
                       </Button>
@@ -1267,16 +1293,18 @@ const Board: React.FC = () => {
                           onClick={() => {
                             triggerDirectDownload(videoData.mp3Url!, 'mp3', 'Audio');
                           }}
-                          minW="120px"
-                          h="40px"
-                          borderRadius="10px"
+                          minW="125px"
+                          h="46px"
+                          borderRadius="12px"
                           fontSize="13px"
-                          fontWeight="600"
-                          bg="#f8fafc"
-                          border="1px solid #e2e8f0"
-                          color="#0f172a"
-                          _hover={{ bg: '#f1f5f9' }}
-                          leftIcon={<MdMusicNote size="15px" />}
+                          fontWeight="700"
+                          bg="#fef3c7"
+                          border="1.5px solid #fde68a"
+                          color="#92400e"
+                          _hover={{ bg: '#fde68a', transform: 'translateY(-1px)' }}
+                          _active={{ transform: 'translateY(0)' }}
+                          leftIcon={<MdMusicNote size="17px" />}
+                          transition="all 0.2s ease"
                         >
                           {trans.result.downloadMp3}
                         </Button>
@@ -1284,20 +1312,21 @@ const Board: React.FC = () => {
 
                       <Tooltip label={copiedLink ? trans.result.copiedLink : trans.result.copyLink}>
                         <Button
-                          h="40px"
-                          px="12px"
-                          borderRadius="10px"
+                          h="46px"
+                          px="14px"
+                          borderRadius="12px"
                           variant="outline"
-                          borderColor="#e2e8f0"
+                          borderColor="#cbd5e1"
+                          borderWidth="1.5px"
                           color="#64748b"
-                          _hover={{ bg: '#f1f5f9', color: '#0f172a' }}
+                          _hover={{ bg: '#f1f5f9', color: '#0f172a', borderColor: '#94a3b8' }}
                           onClick={() =>
                             handleCopyDirectLink(
                               videoData.videoHdUrl || videoData.videoUrl || videoData.mp3Url || '',
                             )
                           }
                         >
-                          {copiedLink ? <MdCheckCircle color="#059669" size="16px" /> : <MdContentCopy size="16px" />}
+                          {copiedLink ? <MdCheckCircle color="#059669" size="18px" /> : <MdContentCopy size="18px" />}
                         </Button>
                       </Tooltip>
                     </Flex>
@@ -1306,10 +1335,16 @@ const Board: React.FC = () => {
                       <Button
                         size="xs"
                         variant="ghost"
-                        mt="8px"
-                        color="#64748b"
-                        leftIcon={<MdPlayArrow size="13px" />}
-                        _hover={{ color: '#0f172a' }}
+                        mt="12px"
+                        color="#0284c7"
+                        bg="#f0f9ff"
+                        border="1px solid #bae6fd"
+                        borderRadius="8px"
+                        px="10px"
+                        h="28px"
+                        fontWeight="600"
+                        leftIcon={<MdPlayArrow size="15px" />}
+                        _hover={{ bg: '#e0f2fe' }}
                         onClick={() => setShowPreviewPlayer((prev) => !prev)}
                       >
                         {showPreviewPlayer ? trans.result.hidePreview : trans.result.showPreview}
@@ -1322,10 +1357,12 @@ const Board: React.FC = () => {
                 <Collapse in={showPreviewPlayer} animateOpacity>
                   {videoData.videoUrl && (
                     <Box
-                      mb="16px"
+                      mb="18px"
                       p="8px"
-                      borderRadius="10px"
-                      bg="#000000"
+                      borderRadius="14px"
+                      bg="#0f172a"
+                      border="1px solid #1e293b"
+                      boxShadow="0 8px 24px -4px rgba(15, 23, 42, 0.25)"
                       overflow="hidden"
                     >
                       <video
@@ -1333,8 +1370,9 @@ const Board: React.FC = () => {
                         controls
                         style={{
                           width: '100%',
-                          maxHeight: '320px',
-                          borderRadius: '6px',
+                          maxHeight: '360px',
+                          borderRadius: '8px',
+                          display: 'block',
                         }}
                       />
                     </Box>
@@ -1343,60 +1381,63 @@ const Board: React.FC = () => {
 
                 {/* Detailed Format Selection Table */}
                 {videoData.formats && videoData.formats.length > 0 && (
-                  <Box mt="14px" pt="14px" borderTop="1px solid #f1f5f9">
-                    <HStack spacing="6px" mb="10px">
-                      <MdOutlineLayers size="14px" color="#64748b" />
+                  <Box mt="18px" pt="16px" borderTop="1.5px solid #e2e8f0">
+                    <HStack spacing="8px" mb="12px">
+                      <MdOutlineLayers size="16px" color="#0284c7" />
                       <Text
-                        fontSize="12px"
-                        fontWeight="700"
-                        color="#64748b"
+                        fontSize="12.5px"
+                        fontWeight="800"
+                        color="#334155"
                         textTransform="uppercase"
-                        letterSpacing="0.04em"
+                        letterSpacing="0.05em"
                       >
                         {trans.result.formatTableTitle}
                       </Text>
                     </HStack>
 
-                    <VStack spacing="6px" align="stretch">
+                    <VStack spacing="8px" align="stretch">
                       {videoData.formats.map((fmt, idx) => (
                         <Flex
                           key={idx}
                           align="center"
                           justify="space-between"
-                          p="8px 12px"
-                          borderRadius="8px"
+                          p="10px 14px"
+                          borderRadius="12px"
                           bg="#f8fafc"
-                          border="1px solid #f1f5f9"
-                          _hover={{ bg: '#f1f5f9' }}
+                          border="1.5px solid #e2e8f0"
+                          _hover={{ bg: '#ffffff', borderColor: '#0284c7', boxShadow: '0 4px 12px rgba(15, 23, 42, 0.05)' }}
+                          transition="all 0.15s ease"
                         >
-                          <HStack spacing="8px">
+                          <HStack spacing="10px">
                             <Badge
                               bg={fmt.type === 'audio' ? '#fef3c7' : '#e0f2fe'}
                               color={fmt.type === 'audio' ? '#92400e' : '#0369a1'}
-                              fontSize="10px"
-                              px="5px"
-                              py="1px"
-                              borderRadius="4px"
+                              fontSize="11px"
+                              px="7px"
+                              py="2px"
+                              borderRadius="6px"
+                              fontWeight="700"
                             >
                               {fmt.quality}
                             </Badge>
-                            <Text fontSize="12px" color="#334155" fontWeight="500">
+                            <Text fontSize="13px" color="#1e293b" fontWeight="600">
                               {fmt.label}
                             </Text>
                           </HStack>
 
                           <Button
-                            size="xs"
-                            h="28px"
-                            borderRadius="6px"
-                            fontSize="11px"
-                            fontWeight="600"
+                            size="sm"
+                            h="32px"
+                            px="14px"
+                            borderRadius="8px"
+                            fontSize="12px"
+                            fontWeight="700"
                             isLoading={downloadingId === `fmt-${idx}`}
                             onClick={() => handleDownloadFormat(fmt, `fmt-${idx}`)}
                             bg="#0f172a"
                             color="#ffffff"
-                            _hover={{ bg: '#1e293b' }}
-                            leftIcon={<MdDownload size="12px" />}
+                            _hover={{ bg: '#0284c7' }}
+                            leftIcon={<MdDownload size="14px" />}
                           >
                             {trans.result.downloadBtn}
                           </Button>
@@ -1410,29 +1451,30 @@ const Board: React.FC = () => {
 
             {/* Quick Reset & Download Another Video Action */}
             <Flex
-              mt="18px"
-              pt="14px"
-              borderTop="1px solid #f1f5f9"
+              mt="20px"
+              pt="16px"
+              borderTop="1.5px solid #e2e8f0"
               justify="space-between"
               align="center"
               flexWrap="wrap"
               gap="10px"
             >
-              <Text fontSize="12px" color="#94a3b8">
+              <Text fontSize="12.5px" color="#64748b" fontWeight="500">
                 {trans.result.securityNotice}
               </Text>
               <Button
                 size="sm"
                 variant="outline"
-                borderColor="#e2e8f0"
+                borderColor="#cbd5e1"
+                borderWidth="1.5px"
                 color="#0f172a"
-                borderRadius="8px"
-                fontSize="12px"
-                fontWeight="600"
-                h="32px"
-                _hover={{ bg: '#f1f5f9' }}
+                borderRadius="10px"
+                fontSize="12.5px"
+                fontWeight="700"
+                h="36px"
+                _hover={{ bg: '#f1f5f9', borderColor: '#94a3b8' }}
                 onClick={onDeleteLink}
-                leftIcon={<MdClear size="14px" />}
+                leftIcon={<MdClear size="15px" />}
               >
                 {trans.result.downloadAnother}
               </Button>
