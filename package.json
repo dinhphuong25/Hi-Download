@@ -5,9 +5,11 @@
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "preview": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.1",
@@ -23,10 +25,10 @@
     "btch-downloader": "^6.4.0",
     "cors": "^2.8.5",
     "eslint": "8.35.0",
-    "eslint-config-next": "13.2.4",
+    "eslint-config-next": "14.2.35",
     "framer-motion": "^10.2.3",
     "jszip": "^3.10.2",
-    "next": "13.2.4",
+    "next": "14.2.35",
     "react": "18.2.0",
     "react-country-flag": "^3.1.0",
     "react-dom": "18.2.0",
@@ -35,7 +37,9 @@
     "zustand": "^4.3.6"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.0.0",
     "@svgr/webpack": "^6.5.1",
-    "@types/jszip": "^3.4.0"
+    "@types/jszip": "^3.4.0",
+    "wrangler": "^4.0.0"
   }
 }
